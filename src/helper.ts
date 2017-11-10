@@ -1,6 +1,6 @@
 import * as types from '@babel/types';
-import { NodePath } from 'babel-traverse';
-import { Program, ImportDeclaration, ImportNamespaceSpecifier, ImportSpecifier, ImportDefaultSpecifier } from 'babel-types';
+import { NodePath, Node } from 'babel-traverse';
+import { Program, ImportDeclaration, ImportNamespaceSpecifier, ImportSpecifier, ImportDefaultSpecifier, ExportDefaultDeclaration, ExportDefaultSpecifier } from 'babel-types';
 import { name2source } from 'nejm/nejmap';
 
 export { isModule } from 'babel-helper-module-transforms';
@@ -18,8 +18,8 @@ export interface Options {
 
 export interface NEJModules {
     nejDefines: NEJDefine[];
-    fnBody: any[];
-    returnStatement: any;
+    fnBody: Node[];
+    exportList: Node[];
 }
 
 
@@ -45,14 +45,14 @@ const genAliasRe = (alias: { [key: string]: string }): RegExp => {
     return new RegExp(reStr.join('|'));
 };
 
-const transformImports = (importList: ImportDeclaration[], { alias, extName }: Options): NEJDefine[] => {
+function transformImports(importList: ImportDeclaration[], { alias, extName }: Options): NEJDefine[] {
     const aliasRe = genAliasRe(alias);
     let extNameRe: RegExp;
     if (extName) {
         extNameRe = new RegExp(escape(extName));
     }
 
-    const _transform = (source: string, specifiers: any[], type: MODULE_TYPE): NEJDefine[] => {
+    function _transform(source: string, specifiers: any[], type: MODULE_TYPE): NEJDefine[] {
         const result: NEJDefine[] = [];
 
         switch (type) {
@@ -147,7 +147,6 @@ export const helper = (path: NodePath, opts: Options = {}): NEJModules => {
     const importList = [];
     const fnBody = [];
     const exportList = [];
-    const returnStatement = [];
 
     (node as Program).body.forEach(statement => {
         if (types.isImportDeclaration(statement)) {
@@ -163,6 +162,6 @@ export const helper = (path: NodePath, opts: Options = {}): NEJModules => {
     return {
         nejDefines: transformImports(importList, opts),
         fnBody,
-        returnStatement
+        exportList
     }
 };
