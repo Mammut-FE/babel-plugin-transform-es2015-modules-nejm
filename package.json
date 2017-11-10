@@ -1,31 +1,33 @@
 {
-  "name": "babel-plugin-transform-es2015-modules-nej",
-  "version": "0.0.1",
-  "description": "babel transform es6 to nej",
-  "main": "lib/index.js",
-  "files": [
-    "lib/index.js",
-    "README.md"
-  ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p src/tsconfig.json --sourceMap false"
-  },
-  "keywords": [
-    "babel",
-    "nej",
-    "es6"
-  ],
-  "author": "lleohao <lleohao@hotmail.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^8.0.47",
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "typescript": "^2.5.3"
-  },
-  "dependencies": {
-    "babel-helper-module-transforms": "^7.0.0-beta.3",
-    "babel-template": "^7.0.0-beta.3"
-  }
+    "name": "babel-plugin-transform-es2015-modules-nejm",
+    "version": "0.0.1",
+    "description": "babel transform es6 to nej",
+    "main": "lib/index.js",
+    "files": [
+        "lib/index.js",
+        "README.md"
+    ],
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "clean": "rm -rf lib",
+        "build": "tsc -p src/tsconfig.json --sourceMap false",
+        "prepublish": "npm run clean & npm run build"
+    },
+    "keywords": [
+        "babel",
+        "nej",
+        "es6"
+    ],
+    "author": "lleohao <lleohao@hotmail.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "@babel/core": "^7.0.0-beta.31",
+        "@types/node": "^8.0.47",
+        "babel-preset-env": "^1.6.1",
+        "typescript": "^2.5.3"
+    },
+    "dependencies": {
+        "@babel/template": "^7.0.0-beta.31",
+        "babel-helper-module-transforms": "^7.0.0-beta.3"
+    }
 }

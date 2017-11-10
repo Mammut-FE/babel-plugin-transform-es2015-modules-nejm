@@ -1,4 +1,4 @@
-import template from "babel-template";
+import template from "@babel/template";
 import {
     isModule,
     rewriteModuleStatementsAndPrepareHeader,
@@ -13,7 +13,7 @@ const buildWrapper = template(`
   })
 `);
 
-function transformNEJDefine({nejmUrl = './nejm.js', packages = []}) {
+function transformNEJDefine({ nejmUrl = './nejm.js', packages = [] }) {
     const nejModule = packages.map(packageName => {
         return new RegExp('\^(' + packageName + ')\/');
     });
@@ -45,11 +45,11 @@ function transformNEJDefine({nejmUrl = './nejm.js', packages = []}) {
     }
 }
 
-export default function ({types: t}) {
+export default function ({ types: t }) {
     return {
         visitor: {
             Program: {
-                exit(path, {opts}) {
+                exit(path, { opts }) {
                     const _ = transformNEJDefine(opts);
                     if (!isModule(path)) return;
 
@@ -57,12 +57,12 @@ export default function ({types: t}) {
                         meta,
                         headers,
                     } = rewriteModuleStatementsAndPrepareHeader(path, {
-                        loose: false,
-                        strict: false,
-                        strictMode: false,
-                        allowTopLevelThis: false,
-                        noInterop: false
-                    });
+                            loose: false,
+                            strict: false,
+                            strictMode: false,
+                            allowTopLevelThis: false,
+                            noInterop: false
+                        });
 
                     const amdArgs = [];
                     const importNames = [];
@@ -96,7 +96,7 @@ export default function ({types: t}) {
                     ensureStatementsHoisted(headers);
                     path.unshiftContainer("body", headers);
 
-                    const {body, directives} = path.node;
+                    const { body, directives } = path.node;
 
                     path.node.directives = [];
                     path.node.body = [];
