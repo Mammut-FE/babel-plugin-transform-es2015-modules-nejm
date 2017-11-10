@@ -11,12 +11,17 @@ interface NEJDefine {
     name?: string;
 }
 
+export interface Options {
+    extName?: string;
+    alias?: { [key: string]: string };
+}
+
 export interface NEJModules {
-    amdArguments: string[];
-    importNames: string[];
+    nejDefines: NEJDefine[];
     fnBody: any[];
     returnStatement: any;
 }
+
 
 const TEXT_MODULR_RE = /\.html$|\.css$|\.json$/;
 enum MODULE_TYPE {
@@ -25,36 +30,28 @@ enum MODULE_TYPE {
     custorm
 }
 
-// FIXME: 后期传入配置项
-const exetName = /\.es6$/;
-const alias = {
-    'actions': 'pro/actions',
-    'global': 'pro/global',
-    'store': 'pro/store',
-    'lib': 'pro/lib'
-};
-
-// FIXME: 后期删掉
-const show = (arr: any[]) => {
-    arr.forEach(a => {
-        console.log(a);
-    });
+const escape = (str: string) => {
+    const excape = /(\/|{|}|\.)/g;
+    return str.replace(excape, '\\' + '$1')
 };
 
 const genAliasRe = (alias: { [key: string]: string }): RegExp => {
-    const excape = /(\/|{|})/g;
     const reStr = [];
 
     for (const key in alias) {
-        reStr.push(`^${key.replace(excape, '\\' + '$1')}`);
+        reStr.push(`^${escape(key)}`);
     }
 
     return new RegExp(reStr.join('|'));
 };
 
+const transformImports = (importList: ImportDeclaration[], { alias, extName }: Options): NEJDefine[] => {
+    const aliasRe = genAliasRe(alias);
+    let extNameRe: RegExp;
+    if (extName) {
+        extNameRe = new RegExp(escape(extName));
+    }
 
-
-const transformImports = (importList: ImportDeclaration[], aliasRe: RegExp): NEJDefine[] => {
     const _transform = (source: string, specifiers: any[], type: MODULE_TYPE): NEJDefine[] => {
         const result: NEJDefine[] = [];
 
@@ -90,7 +87,9 @@ const transformImports = (importList: ImportDeclaration[], aliasRe: RegExp): NEJ
 
                 specifiers.forEach((specifier) => {
                     // 处理自定义的后缀名
-                    source = source.replace(exetName, '');
+                    if (extNameRe) {
+                        source = source.replace(extNameRe, '');
+                    }
 
                     // 处理 alias
                     let _result = source.match(aliasRe);
@@ -114,6 +113,7 @@ const transformImports = (importList: ImportDeclaration[], aliasRe: RegExp): NEJ
 
         return result;
     };
+
     let result: NEJDefine[] = [];
 
     importList.forEach(impd => {
@@ -135,18 +135,22 @@ const transformImports = (importList: ImportDeclaration[], aliasRe: RegExp): NEJ
     return result;
 };
 
-export const helper = (path: NodePath) => {
+const defaultOptions: Options = {
+    extName: '',
+    alias: {}
+};
+
+export const helper = (path: NodePath, opts: Options = {}): NEJModules => {
+    opts = Object.assign(defaultOptions, opts);
+
     const { node } = path;
     const importList = [];
-    const amdArguments = [];
-    const importNames = [];
-    const aliasRe = genAliasRe(alias);
-
     const fnBody = [];
     const exportList = [];
+    const returnStatement = [];
 
     (node as Program).body.forEach(statement => {
-        if (types.isImportDeclaration(statement)) { // 转换 import 为 define([], function(){});
+        if (types.isImportDeclaration(statement)) {
             importList.push(statement);
         } else if (types.isExportDefaultDeclaration(statement) || types.isExportDefaultSpecifier(statement)) {
             // TODO: 添加所有的 export 类型, 暂时只支持 export default
@@ -156,12 +160,9 @@ export const helper = (path: NodePath) => {
         }
     });
 
-    transformImports(importList, aliasRe);
-
-
     return {
-        // importList,
+        nejDefines: transformImports(importList, opts),
         fnBody,
-        exportList
+        returnStatement
     }
 };
