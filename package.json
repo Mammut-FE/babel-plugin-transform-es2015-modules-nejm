@@ -21,13 +21,13 @@
     "author": "lleohao <lleohao@hotmail.com>",
     "license": "MIT",
     "devDependencies": {
-        "@babel/core": "^7.0.0-beta.31",
-        "@types/node": "^8.0.47",
+        "@types/babel-types": "^6.25.1",
+        "babel-core": "^6.26.0",
         "babel-preset-env": "^1.6.1",
-        "typescript": "^2.5.3"
+        "typescript": "^2.6.1"
     },
     "dependencies": {
-        "@babel/template": "^7.0.0-beta.31",
-        "babel-helper-module-transforms": "^7.0.0-beta.3"
+        "babel-helper-nej-transforms": "file:../babel-helper-nej-transforms",
+        "babel-template": "^6.26.0"
     }
 }
