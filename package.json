@@ -1,6 +1,6 @@
 {
     "name": "babel-plugin-transform-es2015-modules-nejm",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "babel transform es6 to nej",
     "main": "lib/index.js",
     "files": [
