@@ -1,7 +1,7 @@
-import template from '@babel/template';
+import * as template from 'babel-template';
 
-import { isModule, helper, NodePath } from './helper';
-import { Program, ExportDefaultDeclaration, returnStatement } from 'babel-types';
+import { fetchImportAndFnbody } from 'babel-helper-nej-transforms';
+import { Program, ExportDefaultDeclaration } from 'babel-types';
 
 const buildWrapper = template(`
   define(AMD_ARGUMENTS, function(IMPORT_NAMES) {
@@ -13,9 +13,7 @@ export default function ({ types: t }) {
         visitor: {
             Program: {
                 exit(path, { opts }) {
-                    if (!isModule(path)) return;
-
-                    const { nejDefines, fnBody, exportDeclaration } = helper(path, opts);
+                    const { nejDefines, fnBody, exportDeclaration } = fetchImportAndFnbody(path, opts);
 
                     const amdArgs = [];
                     const importNames = [];
