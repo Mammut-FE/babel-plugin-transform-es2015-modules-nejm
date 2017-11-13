@@ -1,7 +1,7 @@
 import * as template from 'babel-template';
 
 import { fetchImportAndFnbody } from 'babel-helper-nej-transforms';
-import { Program, ExportDefaultDeclaration } from 'babel-types';
+import { Program, ExportDefaultDeclaration, directive } from 'babel-types';
 
 const buildWrapper = template(`
   define(AMD_ARGUMENTS, function(IMPORT_NAMES) {
@@ -27,7 +27,7 @@ export default function ({ types: t }) {
                         fnBody.push(t.returnStatement((exportDeclaration as ExportDefaultDeclaration).declaration));
                     }
 
-                    const { body, directives } = <Program>path.node;
+                    let { body, directives } = <Program>path.node;
 
                     (path.node as Program).directives = [];
                     (path.node as Program).body = [];
@@ -43,6 +43,12 @@ export default function ({ types: t }) {
                         .get('expression.arguments')
                         .filter(arg => arg.isFunctionExpression())[0]
                         .get('body');
+
+
+                    // 去掉严格模式
+                    directives = directives.filter(directive => {
+                        return directive.value.value !== 'use strict'
+                    });
 
                     amdFactory.pushContainer('directives', directives);
                     amdFactory.pushContainer('body', fnBody);
