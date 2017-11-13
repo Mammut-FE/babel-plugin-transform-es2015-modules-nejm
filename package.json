@@ -27,7 +27,7 @@
         "typescript": "^2.6.1"
     },
     "dependencies": {
-        "babel-helper-nej-transforms": "file:../babel-helper-nej-transforms",
+        "babel-helper-nej-transforms": "^1.1.1",
         "babel-template": "^6.26.0"
     }
 }
