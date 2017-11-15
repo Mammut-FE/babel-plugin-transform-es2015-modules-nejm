@@ -4,4 +4,4 @@
 node_modules
 
 lib
-example
+example/*.out.js
