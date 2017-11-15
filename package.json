@@ -29,5 +29,13 @@
     "dependencies": {
         "babel-helper-nej-transforms": "^1.1.1",
         "babel-template": "^6.26.0"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Mammut-FE/babel-plugin-transform-es2015-modules-nejm.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Mammut-FE/babel-plugin-transform-es2015-modules-nejm/issues"
+    },
+    "homepage": "https://github.com/Mammut-FE/babel-plugin-transform-es2015-modules-nejm#readme"
 }
