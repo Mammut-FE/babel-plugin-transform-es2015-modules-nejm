@@ -26,7 +26,7 @@ npm i babel-preset-env --save-dev
    ```json
    {
       "plugins": ["transform-es2015-modules-nejm"],
-      "presets": ['env']
+      "presets": ["env"]
    }
    ```
 
